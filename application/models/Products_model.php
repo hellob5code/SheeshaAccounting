@@ -1183,7 +1183,7 @@ Product Pick List
 
 */
 
-function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$brand_id=null){
+function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=null,$category_id=null,$item_type_id=null,$pick_list=null,$depid=null,$account_cii,$account_dis=null,$brand_id=null,$sort=null){
     $sql="SELECT main.*
          ".($pick_list==TRUE?",(main.product_ideal - main.CurrentQty) as recommended_qty":"")."
             FROM 
@@ -1193,6 +1193,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 s.supplier_name,
                 it.item_type,
                 account_titles.account_title,
+                brands.brand_name,
                 core.*,
                 tax_types.tax_type,
                 tax_types.tax_rate,
@@ -1366,6 +1367,7 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 LEFT JOIN item_types it ON it.item_type_id = core.item_type_id
                 LEFT JOIN account_titles ON account_titles.account_id=core.income_account_id
                 LEFT JOIN tax_types ON tax_types.tax_type_id=core.tax_type_id
+                LEFT JOIN brands ON brands.brand_id=core.brand_id
 
                 WHERE core.is_active = TRUE
                 ".($supplier_id==null || $supplier_id==0?"":" AND core.supplier_id='".$supplier_id."'")."
@@ -1373,7 +1375,10 @@ function product_list($account,$as_of_date=null,$product_id=null,$supplier_id=nu
                 ".($brand_id==null || $brand_id==0?"":" AND core.brand_id='".$brand_id."'")."
                 ".($item_type_id==null?"":" AND core.item_type_id='".$item_type_id."'")."
 
-                ORDER BY core.product_desc) as main
+
+                ".($sort==null?"ORDER BY core.product_desc ASC":$sort)."
+
+                ) as main
                 ".($pick_list==TRUE?" WHERE main.CurrentQty < main.product_warn ":" ")."
 
 

@@ -19,5 +19,41 @@ class Categories_model extends CORE_Model {
             ";
         return $this->db->query($sql)->result();
     }
+
+    function get_distinct_category($catid,$supid,$bid){
+        $sql="  SELECT
+                  distinct(products.category_id),categories.category_name
+                FROM
+                  products
+
+                  LEFT JOIN categories ON categories.category_id = products.category_id
+                WHERE
+                 products.is_active = TRUE AND products.is_deleted = FALSE
+                 ".($catid==0?"":" AND products.category_id=$catid")."
+                 ".($supid==0?"":" AND products.supplier_id=$supid")."
+                 ".($bid==0?"":" AND products.brand_id=$bid")."
+                 ORDER BY category_name ASC
+
+            ";
+        return $this->db->query($sql)->result();
+    }
+
+    function get_distinct_brand($catid,$supid,$bid){
+        $sql="  SELECT
+                  distinct(products.brand_id),brands.brand_name
+                FROM
+                  products
+
+                  LEFT JOIN brands ON brands.brand_id = products.brand_id
+                WHERE
+                 products.is_active = TRUE AND products.is_deleted = FALSE
+                 ".($catid==0?"":" AND products.category_id=$catid")."
+                 ".($supid==0?"":" AND products.supplier_id=$supid")."
+                 ".($bid==0?"":" AND products.brand_id=$bid")."
+                 ORDER BY brand_name ASC
+
+            ";
+        return $this->db->query($sql)->result();
+    }
 }
 ?>

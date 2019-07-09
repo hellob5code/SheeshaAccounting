@@ -215,7 +215,7 @@
                                                                 </div>
                                                             </div>
                                                             <br>
-                                                            <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
+<!--                                                             <button class="btn btn-primary" id="btn_print" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Print" >
                                                                 <i class="fa fa-print"></i> Print Report</button>&nbsp;
 
                                                             <button class="btn btn-success" id="btn_export" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
@@ -232,7 +232,7 @@
                                                                 <i class="fa fa-print"></i> Print Detailed</button>
 
                                                             <button class="btn btn-success <?php echo (in_array('7-2',$this->session->user_rights)?'':'hidden'); ?>" id="btn_export_detailed" style="text-transform: none; font-family: Tahoma, Georgia, Serif; " data-toggle="modal" data-target="#salesInvoice" data-placement="left" title="Export" >
-                                                                <i class="fa fa-file-excel-o"></i> Export Detailed</button>
+                                                                <i class="fa fa-file-excel-o"></i> Export Detailed</button> -->
                                                         <br />
 
                                                         <div >

@@ -101,7 +101,9 @@ class Rights_link_model extends CORE_Model{
                                           (91,'3','3-6','Sales/Cash Invoice History'),
                                           (92,'7','7-2','Inventory Report Detailed'),
                                           (93,'8','8-6','Profit Report'),
-                                          (94,'3','3-7','Customer Sales History')
+                                          (94,'3','3-7','Customer Sales History'),
+                                          (95,'15','15-7','Inventory Report')
+
 
 
                                           ON DUPLICATE KEY UPDATE
