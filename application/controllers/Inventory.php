@@ -14,6 +14,9 @@ class Inventory extends CORE_Controller
                 'Company_model',
                 'Users_model',
                 'Products_model',
+                'Suppliers_model',
+                'Categories_model',
+                'Brands_model',
                 'Account_integration_model'
             )
         );
@@ -31,7 +34,17 @@ class Inventory extends CORE_Controller
         $data['title'] = 'Inventory Report';
 
         $data['departments']=$this->Departments_model->get_list(array('is_deleted'=>FALSE,'is_active'=>TRUE));
-        
+        $data['suppliers']=$this->Suppliers_model->get_list(
+            array('suppliers.is_deleted'=>FALSE),
+            'suppliers.*,IFNULL(tax_types.tax_rate,0)as tax_rate',
+            array(
+                array('tax_types','tax_types.tax_type_id=suppliers.tax_type_id','left')
+            ),
+            'suppliers.supplier_name ASC'
+        );
+        $data['categories'] = $this->Categories_model->get_list(array('categories.is_deleted'=>FALSE),null,null,'category_name ASC');
+        $data['brands']= $this->Brands_model->get_brand_list();
+
         (in_array('15-4',$this->session->user_rights)? 
         $this->load->view('inventory_report_view',$data)
         :redirect(base_url('dashboard')));
@@ -45,13 +58,16 @@ class Inventory extends CORE_Controller
                 $m_products = $this->Products_model;
                 $date = date('Y-m-d',strtotime($this->input->post('date',TRUE)));
                 $depid = $this->input->post('depid',TRUE);
+                $catid = $this->input->post('catid',TRUE);
+                $supid = $this->input->post('supid',TRUE);
+                $bid = $this->input->post('bid',TRUE);
 
                 $account_integration =$this->Account_integration_model;
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $account_cii =$a_i[0]->cash_invoice_inventory; // Cash Invoice 
                 $account_dis =$a_i[0]->dispatching_invoice_inventory; // Cash Invoice 
-                $response['data']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$account_cii,$account_dis);
+                $response['data']=$m_products->product_list($account,$date,null,$supid,$catid,1,null,$depid,$account_cii,$account_dis,$bid);
                 // $response['data'] = $m_products->get_product_list_inventory($date,$depid,$account);
 
 
@@ -63,15 +79,18 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
-
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Dispatching Invoice 
 
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
 
                 $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $depid = $this->input->get('depid',TRUE);
+                $catid = $this->input->get('catid',TRUE);
+                $supid = $this->input->get('supid',TRUE);
+                $bid = $this->input->get('bid',TRUE);
                 $info = $m_department->get_department_list($depid);
-                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                $data['products']=$m_products->product_list($account,$date,null,$supid,$catid,1,null,$depid,$ci_account,$account_dis,$bid);
                 // $data['products'] = $m_products->get_product_list_inventory($date,$depid,$account);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
@@ -92,15 +111,19 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
-
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Dispatching Invoice 
 
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
 
                 $date = date('Y-m-d',strtotime($this->input->get('date',TRUE)));
                 $depid = $this->input->get('depid',TRUE);
+                $catid = $this->input->get('catid',TRUE);
+                $supid = $this->input->get('supid',TRUE);
+                $bid = $this->input->get('bid',TRUE);
+
                 $info = $m_department->get_department_list($depid);
-                $data['products']=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                $data['products']=$m_products->product_list($account,$date,null,$supid,$catid,1,null,$depid,$ci_account,$account_dis,$bid);
                 // $data['products'] = $m_products->get_product_list_inventory($date,$depid,$account);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
@@ -123,6 +146,10 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Dispatching Invoice 
+                $catid = $this->input->get('catid',TRUE);
+                $supid = $this->input->get('supid',TRUE);
+                $bid = $this->input->get('bid',TRUE);
 
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
@@ -131,7 +158,7 @@ class Inventory extends CORE_Controller
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
 
-                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                $products=$m_products->product_list($account,$date,null,$supid,$catid,1,null,$depid,$ci_account,$account_dis,$bid);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
                 if(isset($info[0])){
@@ -261,6 +288,10 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                 $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Dispatching Invoice 
+                $catid = $this->input->get('catid',TRUE);
+                $supid = $this->input->get('supid',TRUE);
+                $bid = $this->input->get('bid',TRUE);
 
                 $m_products = $this->Products_model;
                 $m_department = $this->Departments_model;
@@ -269,7 +300,7 @@ class Inventory extends CORE_Controller
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
 
-                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                $products=$m_products->product_list($account,$date,null,$supid,$catid,1,null,$depid,$ci_account,$account_dis,$bid);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
                 if(isset($info[0])){
@@ -449,6 +480,11 @@ class Inventory extends CORE_Controller
                 $a_i=$account_integration->get_list();
                 $account =$a_i[0]->sales_invoice_inventory;
                  $ci_account =$a_i[0]->cash_invoice_inventory;
+                $account_dis =$a_i[0]->dispatching_invoice_inventory; // Dispatching Invoice 
+                $catid = $this->input->get('catid',TRUE);
+                $supid = $this->input->get('supid',TRUE);
+                $bid = $this->input->get('bid',TRUE);
+
 
 
                 $m_products = $this->Products_model;
@@ -458,7 +494,7 @@ class Inventory extends CORE_Controller
                 $depid = $this->input->get('depid',TRUE);
                 $info = $m_department->get_department_list($depid);
 
-                $products=$m_products->product_list($account,$date,null,null,null,1,null,$depid,$ci_account);
+                $products=$m_products->product_list($account,$date,null,$supid,$catid,1,null,$depid,$ci_account,$account_dis,$bid);
                 $data['date'] = date('m/d/Y',strtotime($date));
 
                 if(isset($info[0])){
