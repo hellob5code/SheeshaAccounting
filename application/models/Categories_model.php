@@ -29,6 +29,7 @@ class Categories_model extends CORE_Model {
                   LEFT JOIN categories ON categories.category_id = products.category_id
                 WHERE
                  products.is_active = TRUE AND products.is_deleted = FALSE
+                 AND products.item_type_id = 1
                  ".($catid==0?"":" AND products.category_id=$catid")."
                  ".($supid==0?"":" AND products.supplier_id=$supid")."
                  ".($bid==0?"":" AND products.brand_id=$bid")."
@@ -47,6 +48,7 @@ class Categories_model extends CORE_Model {
                   LEFT JOIN brands ON brands.brand_id = products.brand_id
                 WHERE
                  products.is_active = TRUE AND products.is_deleted = FALSE
+                 AND products.item_type_id = 1
                  ".($catid==0?"":" AND products.category_id=$catid")."
                  ".($supid==0?"":" AND products.supplier_id=$supid")."
                  ".($bid==0?"":" AND products.brand_id=$bid")."

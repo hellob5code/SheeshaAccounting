@@ -209,7 +209,7 @@
 
                                                                 </div>
 
-                                                                <div class="col-lg-2">
+                                                                <div class="col-lg-3">
                                                                     As of Date * :<br />
                                                                     <div class="input-group">
                                                                         <input type="text" id="txt_date" name="date_txn" class="date-picker form-control" value="<?php echo date("m/d/Y"); ?>">
@@ -364,6 +364,7 @@
                             '<thead>'+
                             '<th>Product Code</th>'+
                             '<th>Product Description</th>'+
+                            '<th>Brand</th>'+
                             '<th>Category</th>'+
                             '<th>Unit</th>'+
                             '<th class="right-align">Quantity</th>'+                    
@@ -378,6 +379,7 @@
                                 '<tr>'+
                                 '<td>'+value.product_code+'</td>'+
                                 '<td>'+value.product_desc+'</td>'+
+                                '<td>'+value.brand_name+'</td>'+
                                 '<td>'+value.category_name+'</td>'+
                                 '<td>'+value.parent_unit_name+'</td>'+
                                 '<td class="right-align">'+accounting.formatNumber(value.CurrentQty,2)+'</td>'+
